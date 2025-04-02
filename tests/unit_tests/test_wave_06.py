@@ -33,7 +33,8 @@ def test_get_no_matching_items_by_category():
 
     items = vendor.get_by_category("Electronics")
 
-    raise Exception("Complete this test according to comments below.")
+    assert items == []
+    # raise Exception("Complete this test according to comments below.")
     # *********************************************************************
     # ****** Complete Assert Portion of this test **********
     # *********************************************************************
@@ -110,7 +111,13 @@ def test_swap_best_by_category():
         their_priority="Decor"
     )
 
-    raise Exception("Complete this test according to comments below.")
+    assert item_f in tai.inventory
+    assert item_c in jesse.inventory
+    assert item_c not in tai.inventory
+    assert item_f not in jesse.inventory
+    assert result == True
+
+    # raise Exception("Complete this test according to comments below.")
     # *********************************************************************
     # ****** Complete Assert Portion of this test **********
     # *********************************************************************
@@ -143,7 +150,12 @@ def test_swap_best_by_category_reordered():
         their_priority="Decor"
     )
 
-    raise Exception("Complete this test according to comments below.")
+    assert item_f in tai.inventory
+    assert item_c in jesse.inventory
+    assert item_c not in tai.inventory
+    assert item_f not in jesse.inventory
+    assert result == True
+    # raise Exception("Complete this test according to comments below.")
     # *********************************************************************
     # ****** Complete Assert Portion of this test **********
     # *********************************************************************
@@ -228,7 +240,12 @@ def test_swap_best_by_category_no_match_is_false():
         their_priority="Clothing"
     )
 
-    raise Exception("Complete this test according to comments below.")
+    assert result == False
+    assert tai.inventory[0].get_category() != "Clothing"
+    assert tai.inventory[1].get_category() != "Clothing"
+    assert tai.inventory[2].get_category() != "Clothing"
+
+    # raise Exception("Complete this test according to comments below.")
     # *********************************************************************
     # ****** Complete Assert Portion of this test **********
     # *********************************************************************
@@ -261,7 +278,12 @@ def test_swap_best_by_category_no_other_match_is_false():
         their_priority="Decor"
     )
 
-    raise Exception("Complete this test according to comments below.")
+    assert result == False
+    assert jesse.inventory[0].get_category() != "Electronics"
+    assert jesse.inventory[1].get_category() != "Electronics"
+    assert jesse.inventory[2].get_category() != "Electronics"
+
+    # raise Exception("Complete this test according to comments below.")
     # *********************************************************************
     # ****** Complete Assert Portion of this test **********
     # *********************************************************************
