@@ -2,12 +2,18 @@
 import uuid
 
 class Item:
-    def __init__(self, id=None, condition=0):
-        if id is not None:
+    def __init__(self, id=None, condition=0, age=None):
+        if id is not None and isinstance(id, int):
             self.id = id
         else:
             self.id = uuid.uuid4().int  # long unique number
-        self.condition = condition
+
+        if isinstance(condition, (int, float)) and 1.0 <= condition <= 5.0:
+            self.condition = condition
+        else:
+            self.condition = 0
+            
+        self.age = age
 
     def get_category(self):
         return self.__class__.__name__
