@@ -1,6 +1,6 @@
 class Vendor:
-    def __init__(self, inventory = None):
-        if not inventory:
+    def __init__(self, inventory=None):
+        if inventory is None or not isinstance(inventory, list):
             inventory = []
         self.inventory = inventory
 
@@ -9,11 +9,10 @@ class Vendor:
         return item
     
     def remove(self, item):
-        if item in self.inventory:
-            self.inventory.remove(item)
-            return item
-        else: 
+        if item not in self.inventory:
             return False
+        self.inventory.remove(item)
+        return item
         
     def get_by_id(self, id):
         for item in self.inventory:
@@ -22,29 +21,24 @@ class Vendor:
         return None
     
     def swap_items(self, other_vendor, my_item, their_item):
-        if my_item in self.inventory and their_item in other_vendor.inventory:
-            self.remove(my_item)
-            other_vendor.add(my_item)
-            other_vendor.remove(their_item)
-            self.add(their_item)
-            return True
-        return False
+        if my_item not in self.inventory or their_item not in other_vendor.inventory:
+                return False
+        
+        self.remove(my_item)
+        other_vendor.add(my_item)
+        other_vendor.remove(their_item)
+        self.add(their_item)
+        return True
+
     
     def swap_first_item(self, other_vendor):
         if not self.inventory or not other_vendor.inventory:
             return False
-        
-        self.swap_items(other_vendor, self.inventory[0], other_vendor.inventory[0])
-        return True
+              
+        return self.swap_items(other_vendor, self.inventory[0], other_vendor.inventory[0])
     
     def get_by_category(self, category):
-        inventory_by_cat = []
-
-        for item in self.inventory:
-            if item.get_category() == category:
-                inventory_by_cat.append(item)
-
-        return inventory_by_cat
+        return [item for item in self.inventory if item.get_category() == category]
     
     def get_best_by_category(self, category):
         inventory_by_cat = self.get_by_category(category)
@@ -62,35 +56,24 @@ class Vendor:
         item_self_wants = other_vendor.get_best_by_category(my_priority)
         item_other_vendor_wants = self.get_best_by_category(their_priority)
 
-        if item_self_wants is None or item_other_vendor_wants is None:
-            return False
-        
-        self.swap_items(other_vendor, item_other_vendor_wants, item_self_wants)
-        return True
+        return self.swap_items(other_vendor, item_other_vendor_wants, item_self_wants)
     
     def get_newest_item(self):
         if not self.inventory:
             return None
         
-        newest_item = self.inventory[0]
-        age = self.inventory[0].age
+        newest_item = None
 
         for item in self.inventory:
-            if age == None and item.age == None:
+            # skip this item if it has no age (guard clause)
+            if item.age is None:
                 continue
-            elif age != None and item.age == None:
-                continue
-            elif age == None and item.age != None:
-                age = item.age
-                newest_item = item
-            elif age != None and item.age != None:
-                if item.age < age:
-                    age = item.age
-                    newest_item = item
-        
-        if newest_item.age == None:
-            return None
 
+            # we found an item with age
+            # update if this is the first found, or if better than the previous
+            if newest_item is None or item.age < newest_item.age:
+                newest_item = item
+        
         return newest_item
 
 

@@ -2,7 +2,6 @@ import pytest
 from swap_meet.vendor import Vendor
 from swap_meet.item import Item
 
-
 def test_items_have_default_uuid_length_id():
     item = Item()
     assert isinstance(item.id, int)

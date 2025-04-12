@@ -95,10 +95,10 @@ def test_swap_best_by_category():
         their_priority="Decor"
     )
 
-    assert item_f in tai.inventory
-    assert item_c in jesse.inventory
-    assert item_c not in tai.inventory
-    assert item_f not in jesse.inventory
+    assert [item_a, item_b, item_f] == tai.inventory
+    assert [item_d, item_e, item_c] == jesse.inventory
+    assert len(tai.inventory) == 3
+    assert len(jesse.inventory) == 3
     assert result == True
 
 def test_swap_best_by_category_reordered():
@@ -123,10 +123,10 @@ def test_swap_best_by_category_reordered():
         their_priority="Decor"
     )
 
-    assert item_f in tai.inventory
-    assert item_c in jesse.inventory
-    assert item_c not in tai.inventory
-    assert item_f not in jesse.inventory
+    assert [item_b, item_a, item_f] == tai.inventory
+    assert [item_e, item_d, item_c] == jesse.inventory
+    assert len(tai.inventory) == 3
+    assert len(jesse.inventory) == 3
     assert result == True
 
 def test_swap_best_by_category_no_inventory_is_false():
@@ -201,9 +201,10 @@ def test_swap_best_by_category_no_match_is_false():
     )
 
     assert result == False
-    assert tai.inventory[0].get_category() != "Clothing"
-    assert tai.inventory[1].get_category() != "Clothing"
-    assert tai.inventory[2].get_category() != "Clothing"
+    assert len(tai.inventory) == 3
+    assert len(jesse.inventory) == 3
+    assert [item_a, item_b, item_c] == tai.inventory
+    assert [item_d, item_e, item_f] == jesse.inventory
 
 def test_swap_best_by_category_no_other_match_is_false():
     item_a = Decor(condition=2.0)
@@ -227,9 +228,10 @@ def test_swap_best_by_category_no_other_match_is_false():
     )
 
     assert result == False
-    assert jesse.inventory[0].get_category() != "Electronics"
-    assert jesse.inventory[1].get_category() != "Electronics"
-    assert jesse.inventory[2].get_category() != "Electronics"
+    assert len(tai.inventory) == 3
+    assert len(jesse.inventory) == 3
+    assert [item_c, item_b, item_a] == tai.inventory
+    assert [item_f, item_e, item_d] == jesse.inventory
 
 def test_get_newest_item_nominal():
     item_a = Decor(condition=2.0, age=5)
@@ -248,7 +250,8 @@ def test_get_newest_item_empty_inventory():
 
     result = tai.get_newest_item()
     
-    assert result == None
+    assert result is None
+    assert len(tai.inventory) == 0
 
 def test_get_newest_item_age_is_None_by_default():
     item_a = Decor(condition=2.0, age=5)
@@ -272,7 +275,9 @@ def test_get_newest_item_no_ages():
 
     result = tai.get_newest_item()
     
-    assert result == None
+    assert result is None
+    assert len(tai.inventory) == 3
+    assert tai.inventory == [item_c, item_b, item_a]
 
 def test_swap_by_newest_nominal():
     item_a = Decor(condition=2.0, age=5)
@@ -409,21 +414,17 @@ def test_swap_by_newest_default_ages_in_both_inventories():
     assert result == False
 
 def test_id_string():
-    item_a = Decor(id="something", condition=2.0)
-    item_b = Electronics(condition=4.0)
-    item_c = Decor(condition=4.0)
-    tai = Vendor(
-        inventory=[item_a, item_b, item_c]
-    )
-
-    result = tai.inventory[0].id
-    
-    assert isinstance(result, int)
+    with pytest.raises(TypeError):
+        item_a = Decor(id="something", condition=2.0)
 
 def test_condition_is_string():
-    item_a = Decor(condition="something")
-    tai = Vendor(inventory=[item_a])
+    with pytest.raises(TypeError):
+        item_a = Decor(condition="something")
 
-    result = tai.inventory[0].condition
-    
-    assert result == 0
+def test_condition_is_negative():
+    with pytest.raises(ValueError):
+        item_a = Decor(condition=-1)
+
+def test_condition_is_over_five():
+    with pytest.raises(ValueError):
+        item_a = Decor(condition=5.1)
